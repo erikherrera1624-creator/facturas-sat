@@ -1,0 +1,15 @@
+{
+  "_instrucciones": "Este es el unico archivo que necesitas editar antes de publicar. Sigue GUIA.html.",
+
+  "nombreApp": "Facturas SAT",
+
+  "llavePublicaDueno": "",
+
+  "pagos": {
+    "proveedor": "lemonsqueezy",
+    "lemonsqueezyStoreId": "",
+    "gumroadProductId": ""
+  },
+
+  "contactoSoporte": ""
+}

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía Facturas SAT</title>
+<style>
+  :root { --oro:#b8912f; --oro2:#8a6a1c; --claro:#f7efd9; --linea:#ece3cc; }
+  body { font-family:'Segoe UI',system-ui,sans-serif; margin:0; background:#fff; color:#2b2b2b; line-height:1.55; }
+  header { background:linear-gradient(135deg,#fffaf0,#f5ebd0); padding:40px 20px; text-align:center; border-bottom:3px solid var(--oro); }
+  header h1 { margin:0; color:var(--oro2); }
+  main { max-width:820px; margin:0 auto; padding:24px 16px 60px; }
+  details { border:1px solid var(--linea); border-radius:14px; margin-bottom:14px; box-shadow:0 4px 16px rgba(138,106,28,.06); }
+  summary { cursor:pointer; padding:16px 20px; font-size:18px; font-weight:600; list-style:none; display:flex; gap:12px; align-items:center; }
+  summary::-webkit-details-marker { display:none; }
+  summary .n { background:var(--oro); color:#fff; border-radius:50%; width:30px; height:30px; display:grid; place-items:center; font-size:15px; flex-shrink:0; }
+  details[open] summary { border-bottom:1px solid var(--linea); color:var(--oro2); }
+  ol { margin:0; padding:16px 20px 18px 44px; }
+  li { margin:8px 0; }
+  code, .k { background:var(--claro); color:var(--oro2); padding:1px 6px; border-radius:5px; font-family:Consolas,monospace; font-size:14px; }
+  .nota { background:#fffaf0; border-left:4px solid var(--oro); padding:10px 14px; margin:0 20px 18px; border-radius:6px; font-size:14px; }
+  a { color:var(--oro2); }
+</style>
+</head>
+<body>
+<header><h1>Facturas SAT</h1><p>Guía paso a paso · sin saber programar</p></header>
+<main>
+
+<details open>
+  <summary><span class="n">1</span>Publicar tu app (una sola vez, gratis)</summary>
+  <ol>
+    <li>Crea una cuenta en <a href="https://github.com">github.com</a>.</li>
+    <li>Arriba a la derecha: <b>+</b> → <b>New repository</b>. Nombre: <code>facturas-sat</code>. Marca <b>Public</b>. Clic en <b>Create repository</b>.</li>
+    <li>Clic en <b>uploading an existing file</b>. Arrastra <b>todo lo que hay dentro</b> de la carpeta <code>FacturasSAT</code>. Clic en <b>Commit changes</b>.</li>
+    <li>Pestaña <b>Actions</b> → <b>Publicar nueva version</b> → <b>Run workflow</b> → <b>Run workflow</b>.</li>
+    <li>Espera unos 10 minutos, hasta que aparezca una palomita verde ✅.</li>
+    <li>Pestaña <b>Releases</b> (a la derecha, en la página principal) → descarga <code>FacturasSAT-Setup-….exe</code> → instálalo.</li>
+  </ol>
+  <div class="nota">Si Windows dice “Windows protegió su PC”: haz clic en <b>Más información</b> → <b>Ejecutar de todas formas</b>.<br>
+  Si en el paso 4 no aparece “Publicar nueva version”, falta la carpeta <code>.github</code>. Crea el archivo a mano: <b>Add file</b> → <b>Create new file</b> → nombre <code>.github/workflows/publicar.yml</code> → pega el contenido de ese archivo → <b>Commit</b>.</div>
+</details>
+
+<details>
+  <summary><span class="n">2</span>Usarla gratis (modo dueño)</summary>
+  <ol>
+    <li>Abre la app → <b>Soy el dueño de la app</b> → <b>Crear mi llave por primera vez</b>.</li>
+    <li>Guarda el archivo <code>.pem</code>. Haz una copia en una USB o en la nube. <b>No se lo des a nadie.</b></li>
+    <li>Clic en <b>Copiar llave pública</b>.</li>
+    <li>En GitHub abre <code>app-config.json</code> → lápiz ✏️ → pega la llave entre las comillas de <code>"llavePublicaDueno": ""</code> → <b>Commit changes</b>.</li>
+    <li>Publica una versión nueva: <b>Actions</b> → <b>Run workflow</b>. Espera la palomita verde ✅. La app se actualiza sola en unos minutos (ciérrala y ábrela).</li>
+    <li>En la app: <b>Soy el dueño</b> → <b>Tengo mi llave de dueño</b> → elige tu <code>.pem</code>. Listo: la usas gratis, sin anuncios.</li>
+  </ol>
+</details>
+
+<details>
+  <summary><span class="n">3</span>Cobrar cada mes</summary>
+  <ol>
+    <li>Crea una cuenta en <a href="https://www.lemonsqueezy.com">lemonsqueezy.com</a> y registra tu cuenta bancaria o PayPal para recibir tus pagos.</li>
+    <li><b>Products</b> → <b>New product</b> → tipo <b>Subscription</b>, precio mensual. Activa <b>Generate license keys</b>. Guarda.</li>
+    <li>Copia el <b>enlace de compra</b> del producto (botón Share).</li>
+    <li>En GitHub abre <code>remote/config.json</code> → ✏️ → pega el enlace en <code>"linkDeCompra"</code> y escribe tu precio en <code>"precioTexto"</code> → Commit.</li>
+    <li>En Lemon Squeezy: <b>Settings</b> → <b>Stores</b> → copia el número de tu <b>Store ID</b>. Pégalo en <code>app-config.json</code> → <code>"lemonsqueezyStoreId"</code> → Commit → <b>Run workflow</b>.</li>
+  </ol>
+  <div class="nota">El cliente paga y recibe su clave por correo. La pega en la app y queda activo. Si deja de pagar, la app se bloquea sola.<br>
+  ¿Prefieres Gumroad? En <code>app-config.json</code> pon <code>"proveedor": "gumroad"</code> y el ID de tu producto en <code>"gumroadProductId"</code>.</div>
+</details>
+
+<details>
+  <summary><span class="n">4</span>Dar códigos de acceso</summary>
+  <ol>
+    <li>En la app, en modo dueño: <b>Panel del dueño</b>.</li>
+    <li>Escribe el nombre del cliente, la fecha en que vence y el plan (<b>Pro</b> sin anuncios o <b>Básico</b> con anuncios).</li>
+    <li>Clic en <b>Crear código</b>. El código se copia solo; envíalo por WhatsApp o correo.</li>
+    <li>Para anular un código: copia su <b>ID</b> y agrégalo en <code>remote/config.json</code> → <code>"codigosRevocados": ["ID"]</code> → Commit.</li>
+  </ol>
+  <div class="nota">Úsalos para clientes que te pagan por transferencia, para regalos o para pruebas.</div>
+</details>
+
+<details>
+  <summary><span class="n">5</span>Poner publicidad</summary>
+  <ol>
+    <li>En GitHub abre <code>remote/config.json</code> → ✏️.</li>
+    <li>En <code>"lista"</code> pon el <code>"texto"</code> del anuncio, el <code>"link"</code> al que lleva y, si quieres, la dirección de una <code>"imagen"</code>.</li>
+    <li>Commit. Todos lo ven en minutos, sin publicar una versión nueva.</li>
+  </ol>
+  <div class="nota">Los anuncios se muestran en el plan Básico y en la prueba gratis. Para mostrarlos también a quienes pagan: <code>"mostrarAUsuariosDePago": true</code>.<br>
+  Google AdSense no funciona en programas de escritorio. Vende el espacio directamente, por ejemplo a despachos contables, o anuncia tus propios servicios.</div>
+</details>
+
+<details>
+  <summary><span class="n">6</span>Actualizar la app a todos</summary>
+  <ol>
+    <li>Sube a GitHub los archivos que cambiaron (<b>Add file</b> → <b>Upload files</b>) → Commit.</li>
+    <li><b>Actions</b> → <b>Run workflow</b>.</li>
+    <li>Listo. Cada usuario recibe la actualización al abrir la app y ve el aviso “Reiniciar y actualizar”.</li>
+  </ol>
+  <div class="nota">Anuncios, avisos, precio, días de prueba y códigos anulados se cambian solo con <code>remote/config.json</code> y no requieren publicar una versión nueva.<br>
+  ¿Quieres una función nueva? Pídesela a Claude y sube los archivos que te entregue.</div>
+</details>
+
+<details>
+  <summary><span class="n">7</span>Compartir la app</summary>
+  <ol>
+    <li>Envía este enlace: <code>https://github.com/TU_USUARIO/facturas-sat/releases/latest</code></li>
+    <li>También lo encuentras en la app: <b>Mi cuenta</b> → <b>Copiar enlace</b>.</li>
+  </ol>
+</details>
+
+<details>
+  <summary><span class="n">8</span>Cómo la usa tu cliente</summary>
+  <ol>
+    <li><b>Contribuyentes</b> → escribe el RFC y la CIEC → elige los archivos <code>.cer</code> y <code>.key</code> → escribe la contraseña de la e.firma → <b>Guardar</b>.</li>
+    <li><b>Columnas Excel</b> → marca las columnas que quiere → <b>Guardar</b>.</li>
+    <li><b>Descargar</b> → elige Emitidas o Recibidas, el periodo y los filtros → <b>Descargar</b>.</li>
+    <li>Los archivos quedan en <code>Documentos\Facturas SAT\RFC</code>.</li>
+  </ol>
+</details>
+
+<details>
+  <summary><span class="n">!</span>Importante saber</summary>
+  <ol>
+    <li>Para descargar se necesita la <b>e.firma</b>. El SAT no permite la descarga automática solo con la CIEC. La CIEC se guarda para entrar al portal (botón “Copiar CIEC”).</li>
+    <li>El SAT solo entrega XML. El PDF lo crea la app a partir del XML.</li>
+    <li>El SAT tarda de 1 a 30 minutos en preparar los paquetes. Las facturas recibidas que están canceladas no se pueden descargar.</li>
+    <li>La app no tiene límite de descargas. El SAT sí limita cuántas veces se puede pedir el mismo periodo; la app lo maneja sola y no vuelve a pedir lo que ya descargó.</li>
+    <li>Las contraseñas y la e.firma se guardan cifradas solo en la computadora de cada usuario. Nunca se suben a internet.</li>
+    <li>El aviso de Windows desaparece si compras un “certificado de firma de código”. Es opcional.</li>
+    <li>El repositorio es público, así que el código se puede ver. Tu llave <code>.pem</code> <b>nunca</b> se sube.</li>
+  </ol>
+</details>
+
+</main>
+</body>
+</html>

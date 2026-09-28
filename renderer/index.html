@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>Facturas SAT</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ===== Pantalla de acceso ===== -->
+<div class="gate oculto" id="gate">
+  <div class="gate-card">
+    <div class="brand-logo">F</div>
+    <h1>Facturas SAT</h1>
+    <p id="gate-msg">Activa tu cuenta para comenzar.</p>
+    <input type="text" id="gate-clave" placeholder="Pega tu código de acceso o clave de licencia">
+    <button class="btn oro grande" style="width:100%" id="gate-activar">Activar</button>
+    <div class="separador">¿No tienes?</div>
+    <button class="btn" style="width:100%" id="gate-comprar">Suscribirme <span id="gate-precio" class="muted"></span></button>
+    <p class="small" style="margin-top:22px"><button class="link" id="gate-dueno">Soy el dueño de la app</button></p>
+  </div>
+</div>
+
+<div class="app">
+  <!-- ===== Menu ===== -->
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-logo">F</div><div><b>Facturas SAT</b><span>Descarga masiva</span></div></div>
+    <nav class="nav" id="nav">
+      <button data-vista="descargar" class="activo"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg>Descargar</button>
+      <button data-vista="facturas"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z M14 3v5h5 M9 13h7 M9 17h7"/></svg>Mis facturas</button>
+      <button data-vista="excel"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z M4 10h16 M4 15h16 M10 4v16"/></svg>Columnas Excel</button>
+      <button data-vista="contribuyentes"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>Contribuyentes</button>
+      <button data-vista="cuenta"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Mi cuenta</button>
+      <button data-vista="dueno" id="nav-dueno" class="oculto"><svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/></svg>Panel del dueño</button>
+    </nav>
+    <div class="pie"><div class="plan-pill" id="plan-pill">—</div><div id="version"></div></div>
+  </aside>
+
+  <main class="main">
+    <div class="aviso oculto" id="aviso"></div>
+    <div class="topbar">
+      <div class="titulo"><h1 id="titulo">Descargar facturas</h1></div>
+      <label class="small muted">Contribuyente</label>
+      <select id="sel-contrib" style="width:280px"></select>
+    </div>
+
+    <div class="contenido">
+
+      <!-- ===== DESCARGAR ===== -->
+      <section id="v-descargar">
+        <div id="form-descarga">
+          <div class="grid2">
+            <div class="card">
+              <div class="card-head"><div class="paso">1</div><h2>¿Qué facturas?</h2></div>
+              <div class="chips" id="ch-tipo">
+                <button class="chip on" data-v="emitidos">Emitidas</button>
+                <button class="chip on" data-v="recibidos">Recibidas</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="paso">2</div><h2>Periodo</h2></div>
+              <div class="chips" id="ch-periodo" style="margin-bottom:12px">
+                <button class="chip" data-p="mes">Este mes</button>
+                <button class="chip" data-p="mesPasado">Mes pasado</button>
+                <button class="chip on" data-p="anio">Este año</button>
+                <button class="chip" data-p="anioPasado">Año pasado</button>
+              </div>
+              <div class="fila">
+                <label class="campo" style="flex:1">Desde<input type="date" id="f-desde"></label>
+                <label class="campo" style="flex:1">Hasta<input type="date" id="f-hasta"></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="paso">3</div><h2>Filtros <span class="muted small">(si no eliges nada, se incluyen todas)</span></h2></div>
+            <div class="grid2">
+              <div>
+                <h3 style="margin-bottom:8px">Tipo de comprobante</h3>
+                <div class="chips" id="ch-tc">
+                  <button class="chip" data-v="I">Ingreso</button>
+                  <button class="chip" data-v="E">Nota de crédito (Egreso)</button>
+                  <button class="chip" data-v="P">Pago</button>
+                  <button class="chip" data-v="N">Nómina</button>
+                  <button class="chip" data-v="T">Traslado</button>
+                </div>
+                <h3 style="margin:16px 0 8px">Método de pago</h3>
+                <div class="chips" id="ch-mp">
+                  <button class="chip" data-v="PUE">PUE · una exhibición</button>
+                  <button class="chip" data-v="PPD">PPD · parcialidades</button>
+                </div>
+              </div>
+              <label class="campo">Folio fiscal (UUID) <span class="muted" style="font-weight:400">Opcional · uno por renglón. Descarga solo esas facturas.</span>
+                <textarea id="f-uuids" placeholder="Ej. 6F9A1B2C-1234-4ABC-9DEF-0123456789AB"></textarea>
+              </label>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><div class="paso">4</div><h2>¿Qué quieres recibir?</h2></div>
+            <div class="fila" style="gap:24px">
+              <label class="check"><input type="checkbox" checked disabled> XML</label>
+              <label class="check"><input type="checkbox" id="f-pdf" checked> PDF</label>
+              <label class="check"><input type="checkbox" id="f-excel" checked> Excel</label>
+              <label class="check"><input type="checkbox" id="f-vigentes"> Solo vigentes (emitidas)</label>
+              <div style="flex:1"></div>
+              <button class="btn oro grande" id="btn-descargar">Descargar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card oculto" id="progreso">
+          <div class="card-head"><span class="spinner" id="prog-spin"></span><h2 id="prog-titulo">Descargando…</h2><div style="flex:1"></div><button class="btn chico peligro" id="btn-cancelar">Cancelar</button></div>
+          <div class="muted" id="prog-log">Preparando…</div>
+          <div class="barra"><div id="prog-barra"></div></div>
+          <div class="small muted" id="prog-contador"></div>
+          <div class="trabajos" id="prog-trabajos"></div>
+          <p class="small muted" style="margin-top:12px">El SAT prepara los paquetes; puede tardar de 1 a 30 minutos. Si cierras la app, al volver a descargar el mismo periodo se continúa donde se quedó.</p>
+        </div>
+
+        <div class="card oculto" id="resultado">
+          <div class="card-head"><div class="paso">✓</div><h2 id="res-titulo">¡Listo!</h2></div>
+          <div id="res-texto" class="muted"></div>
+          <div class="fila" style="margin-top:16px">
+            <button class="btn oro" id="res-excel">Abrir Excel</button>
+            <button class="btn" id="res-carpeta">Abrir carpeta</button>
+            <button class="btn" id="res-ver">Ver facturas</button>
+            <button class="btn" id="res-nueva">Nueva descarga</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== MIS FACTURAS ===== -->
+      <section id="v-facturas" class="oculto">
+        <div class="card">
+          <div class="fila">
+            <input type="search" id="b-texto" placeholder="Buscar por UUID, RFC, nombre o folio…" style="flex:2;min-width:220px">
+            <select id="b-tipo" style="width:140px"><option value="">Emitidas y recibidas</option><option value="emitidos">Emitidas</option><option value="recibidos">Recibidas</option></select>
+            <select id="b-tc" style="width:170px"><option value="">Todos los tipos</option><option value="I">Ingreso</option><option value="E">Nota de crédito</option><option value="P">Pago</option><option value="N">Nómina</option><option value="T">Traslado</option></select>
+            <select id="b-mp" style="width:120px"><option value="">PUE y PPD</option><option value="PUE">PUE</option><option value="PPD">PPD</option></select>
+            <input type="date" id="b-desde" style="width:150px">
+            <input type="date" id="b-hasta" style="width:150px">
+          </div>
+        </div>
+        <div class="resumen">
+          <div class="kpi"><b id="k-n">0</b><span>facturas</span></div>
+          <div class="kpi"><b id="k-total">$0</b><span>total (MXN)</span></div>
+          <div class="kpi"><b id="k-iva">$0</b><span>IVA trasladado</span></div>
+          <div style="flex:1"></div>
+          <div class="fila">
+            <button class="btn" id="b-importar">Importar XML</button>
+            <button class="btn" id="b-pdf-sel">PDF de seleccionadas</button>
+            <button class="btn" id="b-excel-sel">Excel de seleccionadas</button>
+            <button class="btn oro" id="b-excel">Excel de todo lo filtrado</button>
+          </div>
+        </div>
+        <div class="tabla-wrap">
+          <table>
+            <thead><tr><th><input type="checkbox" id="b-todas"></th><th>Fecha</th><th></th><th>Tipo</th><th>Método</th><th>Serie-Folio</th><th>Emisor</th><th>Receptor</th><th>Total</th><th>Folio fiscal</th><th></th></tr></thead>
+            <tbody id="b-filas"></tbody>
+          </table>
+        </div>
+        <p class="small muted" id="b-limite"></p>
+      </section>
+
+      <!-- ===== COLUMNAS EXCEL ===== -->
+      <section id="v-excel" class="oculto">
+        <div class="card">
+          <div class="fila" style="justify-content:space-between">
+            <div><h2>Elige las columnas de tu Excel</h2><p class="muted small" style="margin:4px 0 0">Se usarán en todas tus descargas. El orden es el de esta lista.</p></div>
+            <div class="fila">
+              <button class="btn chico" data-preset="basico">Básico</button>
+              <button class="btn chico" data-preset="contable">Contable</button>
+              <button class="btn chico" data-preset="completo">Todo</button>
+              <button class="btn chico" data-preset="ninguno">Ninguna</button>
+            </div>
+          </div>
+        </div>
+        <div class="card" id="cols-contenedor"></div>
+        <div class="card">
+          <h2 style="margin-bottom:12px">Hojas adicionales</h2>
+          <div class="fila" style="gap:24px">
+            <label class="check"><input type="checkbox" id="x-conceptos"> Hoja "Conceptos" (cada producto/servicio en un renglón)</label>
+            <label class="check"><input type="checkbox" id="x-pagos"> Hoja "Pagos (PPD)" (qué factura se pagó y cuánto falta)</label>
+          </div>
+          <div style="margin-top:18px"><button class="btn oro" id="x-guardar">Guardar</button></div>
+        </div>
+      </section>
+
+      <!-- ===== CONTRIBUYENTES ===== -->
+      <section id="v-contribuyentes" class="oculto">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-head"><h2>Mis RFC</h2><div style="flex:1"></div><button class="btn chico" id="c-nuevo">+ Agregar</button></div>
+            <div id="c-lista"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2 id="c-form-titulo">Agregar contribuyente</h2></div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="grid2" style="gap:12px">
+                <label class="campo">RFC<input type="text" id="c-rfc" maxlength="13" style="text-transform:uppercase"></label>
+                <label class="campo">Nombre (opcional)<input type="text" id="c-nombre"></label>
+              </div>
+              <label class="campo">Clave CIEC <span class="muted" style="font-weight:400">Opcional · para entrar al portal del SAT</span><input type="password" id="c-ciec" placeholder="••••••••"></label>
+              <h3 style="margin-top:6px">e.firma (FIEL) · necesaria para descargar</h3>
+              <div class="archivo" id="c-cer"><b>.cer</b><span>Elegir certificado…</span></div>
+              <div class="archivo" id="c-key"><b>.key</b><span>Elegir llave privada…</span></div>
+              <label class="campo">Contraseña de la e.firma<input type="password" id="c-pass" placeholder="••••••••"></label>
+              <p class="small muted" style="margin:0">🔒 Todo se guarda cifrado solo en esta computadora.</p>
+              <div class="fila"><button class="btn oro" id="c-guardar">Guardar</button><button class="btn" id="c-cancelar">Limpiar</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CUENTA ===== -->
+      <section id="v-cuenta" class="oculto">
+        <div class="grid2">
+          <div class="card">
+            <h2 style="margin-bottom:10px">Mi suscripción</h2>
+            <p id="cu-estado" style="font-size:16px;font-weight:600"></p>
+            <div class="fila"><button class="btn oro" id="cu-comprar">Suscribirme / renovar</button><button class="btn" id="cu-cambiar">Cambiar código o clave</button></div>
+          </div>
+          <div class="card">
+            <h2 style="margin-bottom:10px">Compartir la app</h2>
+            <p class="muted">Envía este enlace. Siempre descarga la versión más nueva.</p>
+            <div class="codigo-box" id="cu-link"></div>
+            <div class="fila" style="margin-top:10px"><button class="btn" id="cu-copiar">Copiar enlace</button></div>
+          </div>
+          <div class="card">
+            <h2 style="margin-bottom:10px">Carpeta de descargas</h2>
+            <div class="codigo-box" id="cu-carpeta"></div>
+            <div class="fila" style="margin-top:10px"><button class="btn" id="cu-cambiar-carpeta">Cambiar carpeta</button></div>
+          </div>
+          <div class="card">
+            <h2 style="margin-bottom:10px">Acerca de</h2>
+            <p class="muted">Versión <b id="cu-version"></b>. Se actualiza sola.</p>
+            <p class="small muted" id="cu-soporte"></p>
+            <button class="link small" id="cu-dueno">Soy el dueño de la app</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== DUEÑO ===== -->
+      <section id="v-dueno" class="oculto">
+        <div class="grid2">
+          <div class="card">
+            <h2 style="margin-bottom:12px">Crear código de acceso</h2>
+            <p class="muted small">Para clientes que te pagan por transferencia, regalos o pruebas. No necesitan pagar en línea.</p>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <label class="campo">Nombre del cliente<input type="text" id="d-nombre"></label>
+              <div class="grid2" style="gap:12px">
+                <label class="campo">Vence<input type="date" id="d-vence"></label>
+                <label class="campo">Plan<select id="d-plan"><option value="pro">Pro (sin anuncios)</option><option value="basico">Básico (con anuncios)</option></select></label>
+              </div>
+              <button class="btn oro" id="d-generar">Crear código</button>
+              <div class="codigo-box oculto" id="d-codigo"></div>
+            </div>
+          </div>
+          <div class="card">
+            <h2 style="margin-bottom:12px">Códigos creados</h2>
+            <p class="muted small">Para anular un código, copia su ID a "codigosRevocados" en remote/config.json (en GitHub).</p>
+            <div class="tabla-wrap" style="max-height:420px"><table><thead><tr><th>ID</th><th>Cliente</th><th>Vence</th><th>Plan</th><th></th></tr></thead><tbody id="d-lista"></tbody></table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== ACTIVAR DUEÑO ===== -->
+      <section id="v-activar-dueno" class="oculto">
+        <div class="card" style="max-width:720px">
+          <h2 style="margin-bottom:10px">Modo dueño</h2>
+          <p class="muted">Como dueño usas la app gratis, sin anuncios, y creas códigos de acceso.</p>
+          <div class="fila" style="margin:16px 0">
+            <button class="btn oro" id="ad-activar">Tengo mi llave de dueño (.pem)</button>
+            <button class="btn" id="ad-crear">Crear mi llave por primera vez</button>
+          </div>
+          <div id="ad-resultado" class="oculto">
+            <p><b>1.</b> Tu llave privada se guardó en: <span class="codigo-box" id="ad-archivo" style="display:block;margin-top:6px"></span> Guárdala en un lugar seguro (USB o nube). <b>No la compartas.</b></p>
+            <p><b>2.</b> Copia esta llave pública y pégala en <b>app-config.json</b> → "llavePublicaDueno" (ver GUIA, paso 4):</p>
+            <div class="codigo-box" id="ad-publica"></div>
+            <div class="fila" style="margin-top:10px"><button class="btn" id="ad-copiar">Copiar llave pública</button></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="anuncio oculto" id="anuncio"><span class="etq">Anuncio</span><img id="an-img" class="oculto" alt=""><span id="an-texto"></span></div>
+  </main>
+</div>
+
+<div class="toast oculto" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

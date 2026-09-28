@@ -1,0 +1,22 @@
+{
+  "aviso": "",
+
+  "diasDePrueba": 7,
+
+  "linkDeCompra": "",
+  "precioTexto": "$199 MXN al mes",
+
+  "anuncios": {
+    "mostrarAUsuariosDePago": false,
+    "segundosEntreAnuncios": 30,
+    "lista": [
+      {
+        "texto": "¿Necesitas un contador? Escríbenos y te ayudamos.",
+        "imagen": "",
+        "link": ""
+      }
+    ]
+  },
+
+  "codigosRevocados": []
+}
