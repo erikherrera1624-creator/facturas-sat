@@ -1,6 +1,5 @@
 /* global window, document */
 const $ = (id) => document.getElementById(id);
-const api = window.api;
 
 const state = {
   init: null,
